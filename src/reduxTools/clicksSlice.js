@@ -1,4 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { persistReducer } from "redux-persist";
+
+import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
 
 const initialState = {
   clicks: 0,
@@ -7,7 +10,7 @@ const initialState = {
   c: 100500,
 };
 
-export const clicksSlice = createSlice({
+const clicksSlice = createSlice({
   name: "clicks",
   initialState,
   reducers: {
@@ -18,3 +21,18 @@ export const clicksSlice = createSlice({
 });
 
 export const { clicksCounter } = clicksSlice.actions;
+
+// web local storage
+const persistConfig = {
+  key: "clicks",
+  storage,
+  whitelist: ["clicks"],
+};
+
+export const persistedClicksReducer = persistReducer(
+  persistConfig,
+  clicksSlice.reducer,
+);
+
+// Selectors
+export const getClicksQty = state => state.clicksSlice.clicks;
